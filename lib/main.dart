@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/answer.dart';
 import 'package:flutter_complete_guide/question.dart';
+import 'package:flutter_complete_guide/quiz.dart';
+import 'package:flutter_complete_guide/restart.dart';
+import 'package:flutter_complete_guide/result.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,13 +37,13 @@ class _MyAppState extends State<MyApp> {
 
   void _answerQuestions() {
     setState(() {
-      print(questions.length);
-      if (_questionIndex == questions.length - 1) {
-        _questionIndex = 0;
-      } else {
-        _questionIndex = _questionIndex + 1;
-      }
-      print(_questionIndex);
+      _questionIndex = _questionIndex + 1;
+    });
+  }
+
+  void _restart() {
+    setState(() {
+      _questionIndex = 0;
     });
   }
 
@@ -51,12 +54,14 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title: Text("My First App"),
       ),
-      body: Column(children: [
-        Question(questions[_questionIndex]['questionText']),
-        ...(questions[_questionIndex]['answers'] as List<String>)
-            .map((e) => Answer(_answerQuestions, e))
-            .toList(),
-      ]),
+      body: _questionIndex < questions.length
+          ? Quiz(
+              questions: questions,
+              handler: _answerQuestions,
+              currentIndex: _questionIndex)
+          : Column(
+              children: [Result(), Restart(_restart)],
+            ),
     ));
   }
 }
